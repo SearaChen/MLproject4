@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 '''
 in total 4 categories: World(1) Sports(2) Business(3) Sci/Tech(4)
+takes in argument whether the test/train desired, to keep in consistant with original test train split configuation 
 return a pandas dataframe
 '''
 
