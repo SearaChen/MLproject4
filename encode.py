@@ -1,5 +1,6 @@
 import numpy as np
 from operator import itemgetter
+import preprocess
 
 class my_encoding():
 
@@ -15,6 +16,12 @@ class my_encoding():
 		param X: for now assumed to be a list of document, each document being a string
 		returns: a list containing the matrix representation of each document, as described in the paper
 		"""
+
+
+		#first we preprocess the data
+		for document in X:
+			document = preprocess.preprocessDocument(document)
+
 
 		#first we rank of each character in the corpus
 		ranked_characters = self._getRankOfCharacters(X)
