@@ -86,6 +86,6 @@ print(model.summary())
 model.fit(ag_train_input, Y_train,                # Train the model using the training set...
           batch_size=32, epochs=5,
           verbose=1,shuffle=True) #
-model.evaluate(ag_test_input,Y_test)
+print(model.evaluate(ag_test_input,Y_test))
 
-print ("Time spent: {}".format(time.time() -start))
+print ("Time spent: {}s".format(time.time() -start))
