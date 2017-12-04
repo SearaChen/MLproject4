@@ -25,7 +25,7 @@ class my_encoding():
 
 		#first we rank of each character in the corpus
 		ranked_characters = self._getRankOfCharacters(X)
-        print("Got rank")
+		print("Got rank")
 		#now get mapping from character to compress code
 		mapping = self._getMappingCharToCompressCode(ranked_characters)
 
