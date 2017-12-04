@@ -1,13 +1,13 @@
 import numpy as np
 from operator import itemgetter
 import preprocess
+from scipy import sparse
 
 class my_encoding():
 
 	def __init__(self):
 		self.max_number_of_words_per_document = 128
 		self.max_number_of_coordinates_per_word = 256
-
 
 
 
@@ -47,6 +47,9 @@ class my_encoding():
 					break
 			document_representation = self._fixSizeOfDocumentRepresentation(document_representation)
 			document_representation = np.asarray(document_representation)
+
+			##Addition###
+			document_representation = sparse.csr_matrix(document_representation)
 			representations.append(document_representation)
 
 		return representations

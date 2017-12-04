@@ -25,11 +25,11 @@ if __name__ == '__main__':
     print(np.shape(ag_train_text))
     ag_train_text = np.asarray(ag_train_text)
 
-    ag_train_input = encoder.fit(ag_train_text[:60000])
-    size,words,chars = np.shape(ag_train_input)
+    ag_train_input = encoder.fit(ag_train_text[:1000])
+    #size,words,chars = np.shape(ag_train_input)
     print(np.shape(ag_train_input))
-    ag_train_input = np.asarray(ag_train_input)
-
+    #ag_train_input = np.asarray(ag_train_input)
+    """
     ag_test_labels = ag_test_data[:,0]
     #concatenate title and description
     ag_test_text = [' '.join(s) for s in zip(ag_test_data[:,1], ag_test_data[:,2])]
@@ -37,22 +37,25 @@ if __name__ == '__main__':
     ag_test_text = np.asarray(ag_test_text)
 
     ag_test_input = encoder.fit(ag_test_text)
-    size,words,chars = np.shape(ag_test_input)
+    #size,words,chars = np.shape(ag_test_input)
     print(np.shape(ag_test_input))
     ag_test_input = np.asarray(ag_test_input)
-
+    """
 
 
 ######CNN######
 
+
+words = 128
+chars = 256
 num_classes = 4
 
-relabel = [l-1 for l in ag_train_labels[:60000]]
+relabel = [l-1 for l in ag_train_labels[:1000]]
 Y_train = to_categorical(relabel, num_classes) # One-hot encode the labels
 relabel = [l-1 for l in ag_test_labels]
 Y_test = to_categorical(relabel, num_classes) # One-hot encode the labels
 
-input_1 = Input(shape=(words,chars))
+input_1 = Input(shape=(words,chars),sparse=True,)
 
 conv1d_1 = Conv1D(256,3) (input_1)
 conv1d_2 = Conv1D(256,3)(input_1)

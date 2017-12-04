@@ -26,10 +26,11 @@ if __name__ == '__main__':
     ag_train_text = np.asarray(ag_train_text)
     print("encoding...")
     ag_train_input = encoder.fit(ag_train_text)
-    size,words,chars = np.shape(ag_train_input)
+    #size,words,chars = np.shape(ag_train_input)
     print(np.shape(ag_train_input))
-    ag_train_input = np.asarray(ag_train_input)
+    #ag_train_input = np.asarray(ag_train_input)
 
+    """
     ag_test_labels = ag_test_data[:,0]
     #concatenate title and description
     ag_test_text = [' '.join(s) for s in zip(ag_test_data[:,1], ag_test_data[:,2])]
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     size,words,chars = np.shape(ag_test_input)
     print(np.shape(ag_test_input))
     ag_test_input = np.asarray(ag_test_input)
-
+    """
 
 
 ######CNN######
