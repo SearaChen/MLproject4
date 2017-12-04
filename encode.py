@@ -19,8 +19,8 @@ class my_encoding():
 
 
 		#first we preprocess the data
-		for document in X:
-			document = preprocess.preprocessDocument(document)
+		#for document in X:
+		#	document = preprocess.preprocessDocument(document)
 
 
 		#first we rank of each character in the corpus
