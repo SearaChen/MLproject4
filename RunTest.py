@@ -112,7 +112,8 @@ model.compile(loss='categorical_crossentropy', # using the cross-entropy loss fu
 
 print(model.summary())
 
-model.fit_generator(batch_generator(ag_train_input,Y_train,32), steps_per_epoch=3750, epochs=10, verbose=1)
+model.fit_generator(batch_generator(ag_train_input,Y_train,32), steps_per_epoch=3750, epochs=10,
+                    verbose=1,workers=2,use_multiprocessing=True)
 
 #model.fit(ag_train_input, Y_train,                # Train the model using the training set...
 #          batch_size=32, epochs=5,
