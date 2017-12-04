@@ -25,7 +25,7 @@ if __name__ == '__main__':
     print(np.shape(ag_train_text))
     ag_train_text = np.asarray(ag_train_text)
 
-    ag_train_input = encoder.fit(ag_train_text[:5000])
+    ag_train_input = encoder.fit(ag_train_text[:60000])
     size,words,chars = np.shape(ag_train_input)
     print(np.shape(ag_train_input))
     ag_train_input = np.asarray(ag_train_input)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
 num_classes = 4
 
-relabel = [l-1 for l in ag_train_labels[:5000]]
+relabel = [l-1 for l in ag_train_labels[:60000]]
 Y_train = to_categorical(relabel, num_classes) # One-hot encode the labels
 relabel = [l-1 for l in ag_test_labels]
 Y_test = to_categorical(relabel, num_classes) # One-hot encode the labels

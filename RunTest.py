@@ -24,7 +24,7 @@ if __name__ == '__main__':
     ag_train_text = [' '.join(s) for s in zip(ag_train_data[:,1], ag_train_data[:,2])]
     print(np.shape(ag_train_text))
     ag_train_text = np.asarray(ag_train_text)
-
+    print("encoding...")
     ag_train_input = encoder.fit(ag_train_text)
     size,words,chars = np.shape(ag_train_input)
     print(np.shape(ag_train_input))

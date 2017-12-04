@@ -19,13 +19,13 @@ class my_encoding():
 
 
 		#first we preprocess the data
-		#for document in X:
-		#	document = preprocess.preprocessDocument(document)
+		for document in X:
+			document = preprocess.preprocessDocument(document)
 
 
 		#first we rank of each character in the corpus
 		ranked_characters = self._getRankOfCharacters(X)
-
+        print("Got rank")
 		#now get mapping from character to compress code
 		mapping = self._getMappingCharToCompressCode(ranked_characters)
 
