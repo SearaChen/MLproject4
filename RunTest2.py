@@ -12,6 +12,30 @@ from keras.layers import Concatenate
 from keras.models import Model
 import time
 
+
+def batch_generator(X_data, y_data, batch_size):
+    samples_per_epoch = X_data.shape[0]
+    number_of_batches = samples_per_epoch/batch_size
+    print(samples_per_epoch,number_of_batches)
+    counter=0
+    index = np.arange(np.shape(y_data)[0])
+    while 1:
+        denseList = []
+        index_batch = index[batch_size*counter:batch_size*(counter+1)]
+        denseList = [x.todense() for x in X_data[index_batch]]
+
+        #X_batch = X_data[index_batch].todense()
+
+
+        y_batch = y_data[index_batch]
+        counter += 1
+        yield np.array(denseList),y_batch
+        if (counter >= number_of_batches):
+            counter=0
+
+
+
+
 if __name__ == '__main__':
     start = time.time()
 
@@ -25,10 +49,12 @@ if __name__ == '__main__':
     print(np.shape(ag_train_text))
     ag_train_text = np.asarray(ag_train_text)
 
+    print("encoding...")
     ag_train_input = encoder.fit(ag_train_text[:1000])
     #size,words,chars = np.shape(ag_train_input)
     print(np.shape(ag_train_input))
-    #ag_train_input = np.asarray(ag_train_input)
+    ag_train_input = np.asarray(ag_train_input)
+
     """
     ag_test_labels = ag_test_data[:,0]
     #concatenate title and description
@@ -37,25 +63,24 @@ if __name__ == '__main__':
     ag_test_text = np.asarray(ag_test_text)
 
     ag_test_input = encoder.fit(ag_test_text)
-    #size,words,chars = np.shape(ag_test_input)
+    size,words,chars = np.shape(ag_test_input)
     print(np.shape(ag_test_input))
     ag_test_input = np.asarray(ag_test_input)
     """
 
 
 ######CNN######
-
-
 words = 128
-chars = 256
+chars =256
+
 num_classes = 4
 
 relabel = [l-1 for l in ag_train_labels[:1000]]
 Y_train = to_categorical(relabel, num_classes) # One-hot encode the labels
-relabel = [l-1 for l in ag_test_labels]
-Y_test = to_categorical(relabel, num_classes) # One-hot encode the labels
+#relabel = [l-1 for l in ag_test_labels]
+#Y_test = to_categorical(relabel, num_classes) # One-hot encode the labels
 
-input_1 = Input(shape=(words,chars),sparse=True,)
+input_1 = Input(shape=(words,chars))
 
 conv1d_1 = Conv1D(256,3) (input_1)
 conv1d_2 = Conv1D(256,3)(input_1)
@@ -86,9 +111,12 @@ model.compile(loss='categorical_crossentropy', # using the cross-entropy loss fu
               metrics=['accuracy']) # reporting the accuracy
 
 print(model.summary())
-model.fit(ag_train_input, Y_train,                # Train the model using the training set...
-          batch_size=32, epochs=5,
-          verbose=1,shuffle=True) #
-model.evaluate(ag_test_input,Y_test)
 
-print ("Time spent: {}".format(time.time() -start))
+model.fit_generator(batch_generator(ag_train_input,Y_train,500), steps_per_epoch=2, epochs=10, verbose=1)
+
+#model.fit(ag_train_input, Y_train,                # Train the model using the training set...
+#          batch_size=32, epochs=5,
+#          verbose=1,shuffle=True) #
+#print(model.evaluate(ag_test_input,Y_test))
+
+print ("Time spent: {}s".format(time.time() -start))
