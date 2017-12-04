@@ -19,12 +19,14 @@ class my_encoding():
 
 
 		#first we preprocess the data
+		X_new = []
 		for document in X:
 			document = preprocess.preprocessDocument(document)
+			X_new.append(document)
 
 
 		#first we rank of each character in the corpus
-		ranked_characters = self._getRankOfCharacters(X)
+		ranked_characters = self._getRankOfCharacters(X_new)
 		print("Got rank")
 		#now get mapping from character to compress code
 		mapping = self._getMappingCharToCompressCode(ranked_characters)
@@ -32,7 +34,7 @@ class my_encoding():
 		
 		#now we can build the representation of each document
 		representations = []
-		for document in X:
+		for document in X_new:
 			document_representation = []
 			words = document.split()
 			for word in words:
@@ -53,10 +55,6 @@ class my_encoding():
 			representations.append(document_representation)
 
 		return representations
-
-
-
-
 
 
 
