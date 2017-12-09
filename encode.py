@@ -57,9 +57,6 @@ class my_encoding():
 		return representations
 
 
-
-
-
 	def _getRankOfCharacters(self,X):
 		
 		#first we get count of each character

@@ -10,29 +10,25 @@ from keras.layers import Flatten
 from keras.layers import Dense
 from keras.layers import Concatenate
 from keras.models import Model
+from keras.utils import Sequence
+import math
 import time
 
 
-def batch_generator(X_data, y_data, batch_size):
-    samples_per_epoch = X_data.shape[0]
-    number_of_batches = samples_per_epoch/batch_size
-    print(samples_per_epoch,number_of_batches)
-    counter=0
-    index = np.arange(np.shape(y_data)[0])
-    while 1:
-        denseList = []
-        index_batch = index[batch_size*counter:batch_size*(counter+1)]
-        denseList = [x.todense() for x in X_data[index_batch]]
+class ToDenseSeq(Sequence):
 
-        #X_batch = X_data[index_batch].todense()
+    def __init__(self, x_set, y_set, batch_size):
+        self.x, self.y = x_set, y_set
+        self.batch_size = batch_size
 
+    def __len__(self):
+        return math.ceil(len(self.x) / self.batch_size)
 
-        y_batch = y_data[index_batch]
-        counter += 1
-        yield np.array(denseList),y_batch
-        if (counter >= number_of_batches):
-            counter=0
+    def __getitem__(self, idx):
+        batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size]
+        batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]
 
+        return np.array([x.todense() for x in batch_x]), np.array(batch_y)
 
 
 
@@ -43,10 +39,6 @@ if __name__ == '__main__':
     ag_train_data = read_in('train')
     ag_test_data = read_in('test')
 
-    #ag_train_data = np.asarray(ag_train_data)
-    np.random.shuffle(ag_train_data)
-
-
     ag_train_labels = ag_train_data[:,0]
     #concatenate title and description
     ag_train_text = [' '.join(s) for s in zip(ag_train_data[:,1], ag_train_data[:,2])]
@@ -56,9 +48,9 @@ if __name__ == '__main__':
     print("encoding...")
     ag_train_input = encoder.fit(ag_train_text)
     #size,words,chars = np.shape(ag_train_input)
-    print(np.shape(ag_train_input))
-    ag_train_input = np.asarray(ag_train_input)
 
+    ag_train_input = np.asarray(ag_train_input)
+    print(np.shape(ag_train_input))
     """
     ag_test_labels = ag_test_data[:,0]
     #concatenate title and description
@@ -106,7 +98,7 @@ max_pooling1d_6 = MaxPooling1D(4)(conv1d_6)
 
 flatten_1 = Flatten()(max_pooling1d_6)
 dense_1 = Dense(128)(flatten_1)
-dense_2 = Dense(num_classes)(dense_1)
+dense_2 = Dense(num_classes, activation="softmax")(dense_1)
 
 model = Model(inputs=input_1, outputs=dense_2)
 
@@ -116,12 +108,11 @@ model.compile(loss='categorical_crossentropy', # using the cross-entropy loss fu
 
 print(model.summary())
 
-model.fit_generator(batch_generator(ag_train_input,Y_train,32), steps_per_epoch=3750, epochs=10,
-                    verbose=1,workers=2,use_multiprocessing=True)
 
-#model.fit(ag_train_input, Y_train,                # Train the model using the training set...
-#          batch_size=32, epochs=5,
-#          verbose=1,shuffle=True) #
-#print(model.evaluate(ag_test_input,Y_test))
+seq = ToDenseSeq(ag_train_input,Y_train,32)
+
+model.fit_generator(seq,steps_per_epoch=3750, epochs=10, verbose=1)
+
+
 
 print ("Time spent: {}s".format(time.time() -start))
