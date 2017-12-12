@@ -110,7 +110,7 @@ print(model.summary())
 
 seq = ToDenseSeq(ag_train_text,Y_train,32)
 
-model.fit_generator(seq,steps_per_epoch=3750, epochs=5, verbose=1,use_multiprocessing=True,workers=4)
+model.fit_generator(seq,steps_per_epoch=3750, epochs=5, verbose=1)
 
 seq = ToDenseSeq(ag_test_text,Y_test,400)
 print(model.evaluate_generator(seq,steps=19))
