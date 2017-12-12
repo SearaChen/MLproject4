@@ -9,6 +9,6 @@ def preprocessDocument(doc):
 	doc = doc.lower()
 
 	#next we replace '\' with ' '
-	doc = doc.replace('\\',' ')
+	#doc = doc.replace('\\',' ')
 
 	return doc
