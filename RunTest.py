@@ -77,10 +77,10 @@ Y_test = to_categorical(relabel, num_classes) # One-hot encode the labels
 
 input_1 = Input(shape=(words,chars))
 
-conv1d_1 = Conv1D(256,3,activation='RELU')(input_1)
-conv1d_2 = Conv1D(256,3,activation='RELU')(input_1)
-conv1d_3 = Conv1D(256,3,activation='RELU')(input_1)
-conv1d_4 = Conv1D(256,3,activation='RELU')(input_1)
+conv1d_1 = Conv1D(256,3,activation='relu')(input_1)
+conv1d_2 = Conv1D(256,3,activation='relu')(input_1)
+conv1d_3 = Conv1D(256,3,activation='relu')(input_1)
+conv1d_4 = Conv1D(256,3,activation='relu')(input_1)
 
 max_pooling1d_1 = MaxPooling1D(3)(conv1d_1)
 max_pooling1d_2 = MaxPooling1D(3)(conv1d_2)
@@ -89,14 +89,14 @@ max_pooling1d_4 = MaxPooling1D(3)(conv1d_4)
 
 merge_1 = Concatenate(axis=1)([max_pooling1d_1,max_pooling1d_2,max_pooling1d_3,max_pooling1d_4])
 
-conv1d_5 = Conv1D(256,5,activation='RELU')(merge_1)
+conv1d_5 = Conv1D(256,5,activation='relu')(merge_1)
 max_pooling1d_5 = MaxPooling1D(3)(conv1d_5)
 
-conv1d_6 = Conv1D(256,5)(max_pooling1d_5)
+conv1d_6 = Conv1D(256,5,activation='relu')(max_pooling1d_5)
 max_pooling1d_6 = MaxPooling1D(4)(conv1d_6)
 
 flatten_1 = Flatten()(max_pooling1d_6)
-dense_1 = Dense(128)(flatten_1)
+dense_1 = Dense(128,activation='relu')(flatten_1)
 dense_2 = Dense(num_classes, activation="softmax")(dense_1)
 
 model = Model(inputs=input_1, outputs=dense_2)
