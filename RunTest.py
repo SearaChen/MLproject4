@@ -121,7 +121,7 @@ print(model.summary())
 
 
 seq = ToDenseSeq(ag_train_text,Y_train,32)
-cb = ModelCheckpoint("epoch{epoch:02d}{}.hdf5".format(arg), monitor='acc', save_best_only=False, save_weights_only=False, mode='auto', period=1)
+cb = ModelCheckpoint("model.hdf5", monitor='acc', save_best_only=False, save_weights_only=False, mode='auto', period=1)
 model.fit_generator(seq,steps_per_epoch=batches, epochs=5, verbose=1,callbacks=[cb])
 
 
