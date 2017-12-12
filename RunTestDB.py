@@ -37,8 +37,8 @@ if __name__ == '__main__':
     start = time.time()
 
     encoder = my_encoding()
-    ag_train_data = read_in('train')
-    ag_test_data = read_in('test')
+    ag_train_data = read_in('dbpedia_csv','train')
+    ag_test_data = read_in('dbpedia_csv','test')
 
     ag_train_labels = ag_train_data[:,0]
     #concatenate title and description
@@ -68,7 +68,7 @@ if __name__ == '__main__':
 words = 128
 chars =256
 
-num_classes = 4
+num_classes = 14
 
 relabel = [l-1 for l in ag_train_labels]
 Y_train = to_categorical(relabel, num_classes) # One-hot encode the labels

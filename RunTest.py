@@ -37,8 +37,8 @@ if __name__ == '__main__':
     start = time.time()
 
     encoder = my_encoding()
-    ag_train_data = read_in('train')
-    ag_test_data = read_in('test')
+    ag_train_data = read_in('ag_news_csv','train')
+    ag_test_data = read_in('ag_news_csv','test')
 
     ag_train_labels = ag_train_data[:,0]
     #concatenate title and description
