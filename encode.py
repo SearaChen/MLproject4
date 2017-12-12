@@ -51,7 +51,11 @@ class my_encoding():
 			for word in words:
 				word_representation = np.array([])
 				for char in word:
-					word_representation = np.concatenate((word_representation, mapping[char]))
+					try:
+						word_representation = np.concatenate((word_representation, mapping[char]))
+					except KeyError:
+						word_representation = word_representation
+
 					if len(word_representation) > self.max_number_of_coordinates_per_word:
 						break
 				word_representation = self._fixSizeOfWordRepresentation(word_representation)
