@@ -77,10 +77,10 @@ Y_test = to_categorical(relabel, num_classes) # One-hot encode the labels
 
 input_1 = Input(shape=(words,chars))
 
-conv1d_1 = Conv1D(256,3,activation='relu')(input_1)
-conv1d_2 = Conv1D(256,3,activation='relu')(input_1)
-conv1d_3 = Conv1D(256,3,activation='relu')(input_1)
-conv1d_4 = Conv1D(256,3,activation='relu')(input_1)
+conv1d_1 = Conv1D(256,3)(input_1)
+conv1d_2 = Conv1D(256,3)(input_1)
+conv1d_3 = Conv1D(256,3)(input_1)
+conv1d_4 = Conv1D(256,3)(input_1)
 
 max_pooling1d_1 = MaxPooling1D(3)(conv1d_1)
 max_pooling1d_2 = MaxPooling1D(3)(conv1d_2)
@@ -89,10 +89,10 @@ max_pooling1d_4 = MaxPooling1D(3)(conv1d_4)
 
 merge_1 = Concatenate(axis=1)([max_pooling1d_1,max_pooling1d_2,max_pooling1d_3,max_pooling1d_4])
 
-conv1d_5 = Conv1D(256,5,activation='relu')(merge_1)
+conv1d_5 = Conv1D(256,5)(merge_1)
 max_pooling1d_5 = MaxPooling1D(3)(conv1d_5)
 
-conv1d_6 = Conv1D(256,5,activation='relu')(max_pooling1d_5)
+conv1d_6 = Conv1D(256,5)(max_pooling1d_5)
 max_pooling1d_6 = MaxPooling1D(4)(conv1d_6)
 
 flatten_1 = Flatten()(max_pooling1d_6)
@@ -110,7 +110,7 @@ print(model.summary())
 
 seq = ToDenseSeq(ag_train_input,Y_train,32)
 
-model.fit_generator(seq,steps_per_epoch=3750, epochs=1, verbose=1)
+model.fit_generator(seq,steps_per_epoch=3750, epochs=5, verbose=1)
 
 seq = ToDenseSeq(ag_test_input,Y_test,400)
 print(model.evaluate_generator(seq,steps=19))
