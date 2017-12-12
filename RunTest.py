@@ -14,7 +14,7 @@ from keras.utils import Sequence
 import math
 import time
 import sys
-
+from keras.callbacks import ModelCheckpoint
 
 class ToDenseSeq(Sequence):
 
@@ -40,18 +40,19 @@ if __name__ == '__main__':
     start = time.time()
     arg = sys.argv[1]
 
-
+    path = arg + '_csv'
     if arg == 'ag_news':
         batches = 3750
         testbatches = 19
     elif arg == 'dbpedia':
         batches = 17500
         testbatches = 150
-    elif arg == 'yelp_polarity':
+    elif arg == 'yelp_pol':
+        path = 'yelp_review_polarity_csv'
         batches = 17500
         testbatches = 95
 
-    path = arg + '_csv'
+
     ag_train_data = read_in(path,'train')
     ag_test_data = read_in(path,'test')
 
@@ -120,8 +121,9 @@ print(model.summary())
 
 
 seq = ToDenseSeq(ag_train_text,Y_train,32)
+cb = ModelCheckpoint("epoch{epoch:02d}{}.hdf5".format(arg), monitor='acc', save_best_only=False, save_weights_only=False, mode='auto', period=1)
+model.fit_generator(seq,steps_per_epoch=batches, epochs=5, verbose=1,callbacks=[cb])
 
-model.fit_generator(seq,steps_per_epoch=batches, epochs=5, verbose=1)
 
 seq = ToDenseSeq(ag_test_text,Y_test,400)
 print(model.evaluate_generator(seq,steps=testbatches))
