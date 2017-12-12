@@ -25,10 +25,12 @@ class ToDenseSeq(Sequence):
         return math.ceil(len(self.x) / self.batch_size)
 
     def __getitem__(self, idx):
+        global encoder
+
         batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size]
         batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]
 
-        return np.array([x.todense() for x in batch_x]), np.array(batch_y)
+        return encoder.transform(batch_x),np.array(batch_y)
 
     def on_epoch_end(self):
         pass
@@ -47,11 +49,7 @@ if __name__ == '__main__':
     ag_train_text = np.asarray(ag_train_text)
 
     print("encoding...")
-    ag_train_input = encoder.fit(ag_train_text)
-    #size,words,chars = np.shape(ag_train_input)
-
-    ag_train_input = np.asarray(ag_train_input)
-    print(np.shape(ag_train_input))
+    encoder.fit(ag_train_text)
 
     ag_test_labels = ag_test_data[:,0]
     #concatenate title and description
@@ -59,8 +57,6 @@ if __name__ == '__main__':
     print(np.shape(ag_test_text))
     ag_test_text = np.asarray(ag_test_text)
 
-    ag_test_input = encoder.fit(ag_test_text)
-    ag_test_input = np.asarray(ag_test_input)
 
 
 
@@ -108,11 +104,11 @@ model.compile(loss='categorical_crossentropy', # using the cross-entropy loss fu
 print(model.summary())
 
 
-seq = ToDenseSeq(ag_train_input,Y_train,32)
+seq = ToDenseSeq(ag_train_text,Y_train,32)
 
 model.fit_generator(seq,steps_per_epoch=3750, epochs=5, verbose=1)
 
-seq = ToDenseSeq(ag_test_input,Y_test,400)
+seq = ToDenseSeq(ag_test_text,Y_test,400)
 print(model.evaluate_generator(seq,steps=19))
 
 print ("Time spent: {}s".format(time.time() -start))

@@ -8,6 +8,7 @@ class my_encoding():
 	def __init__(self):
 		self.max_number_of_words_per_document = 128
 		self.max_number_of_coordinates_per_word = 256
+		self.map = {}
 
 
 
@@ -29,10 +30,20 @@ class my_encoding():
 		ranked_characters = self._getRankOfCharacters(X_new)
 		print("Got rank")
 		#now get mapping from character to compress code
-		mapping = self._getMappingCharToCompressCode(ranked_characters)
+		self._getMappingCharToCompressCode(ranked_characters)
 
-		
-		#now we can build the representation of each document
+
+
+	def transform(self,X):
+		# first we preprocess the data
+		X_new = []
+		for document in X:
+			document = preprocess.preprocessDocument(document)
+			X_new.append(document)
+
+		mapping = self.map
+
+		# now we can build the representation of each document
 		representations = []
 		for document in X_new:
 			document_representation = []
@@ -40,21 +51,22 @@ class my_encoding():
 			for word in words:
 				word_representation = np.array([])
 				for char in word:
-					word_representation = np.concatenate((word_representation,mapping[char]))
+					word_representation = np.concatenate((word_representation, mapping[char]))
 					if len(word_representation) > self.max_number_of_coordinates_per_word:
 						break
 				word_representation = self._fixSizeOfWordRepresentation(word_representation)
 				document_representation.append(word_representation)
-				if len(document_representation)>self.max_number_of_words_per_document:
+				if len(document_representation) > self.max_number_of_words_per_document:
 					break
 			document_representation = self._fixSizeOfDocumentRepresentation(document_representation)
 			document_representation = np.asarray(document_representation)
 
-			##Addition###
-			document_representation = sparse.csr_matrix(document_representation)
+			###Addition###
+			#document_representation = sparse.csr_matrix(document_representation)
 			representations.append(document_representation)
 
-		return representations
+		return np.array(representations)
+
 
 
 	def _getRankOfCharacters(self,X):
@@ -67,7 +79,6 @@ class my_encoding():
 						count[charac] += 1
 					else:
 						count[charac] = 1
-
 
 		list_count = []
 		for charac in count:
@@ -92,7 +103,7 @@ class my_encoding():
 		mapping = {}
 		for rank in range(len(ranked_characters)):
 			mapping[ranked_characters[rank]] = self._createCompressCode(rank)
-		return mapping
+		self.map = mapping
 
 
 	def _createCompressCode(self,rank):
