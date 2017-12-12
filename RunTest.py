@@ -40,6 +40,17 @@ if __name__ == '__main__':
     start = time.time()
     arg = sys.argv[1]
 
+
+    if arg == 'ag_news':
+        batches = 3750
+        testbatches = 19
+    elif arg == 'dbpedia':
+        batches = 17500
+        testbatches = 150
+    elif arg == 'yelp_polarity':
+        batches = 17500
+        testbatches = 95
+
     path = arg + '_csv'
     ag_train_data = read_in(path,'train')
     ag_test_data = read_in(path,'test')
@@ -110,9 +121,9 @@ print(model.summary())
 
 seq = ToDenseSeq(ag_train_text,Y_train,32)
 
-model.fit_generator(seq,steps_per_epoch=3750, epochs=5, verbose=1)
+model.fit_generator(seq,steps_per_epoch=batches, epochs=5, verbose=1)
 
 seq = ToDenseSeq(ag_test_text,Y_test,400)
-print(model.evaluate_generator(seq,steps=19))
+print(model.evaluate_generator(seq,steps=testbatches))
 
 print ("Time spent: {}s".format(time.time() -start))
