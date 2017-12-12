@@ -13,6 +13,7 @@ from keras.models import Model
 from keras.utils import Sequence
 import math
 import time
+import sys
 
 
 class ToDenseSeq(Sequence):
@@ -37,10 +38,13 @@ class ToDenseSeq(Sequence):
 
 if __name__ == '__main__':
     start = time.time()
+    arg = sys.argv[1]
+
+    path = arg + '_csv'
+    ag_train_data = read_in(path,'train')
+    ag_test_data = read_in(path,'test')
 
     encoder = my_encoding()
-    ag_train_data = read_in('ag_news_csv','train')
-    ag_test_data = read_in('ag_news_csv','test')
 
     ag_train_labels = ag_train_data[:,0]
     #concatenate title and description
@@ -64,7 +68,7 @@ if __name__ == '__main__':
 words = 128
 chars =256
 
-num_classes = 4
+num_classes = len(set(ag_train_labels))
 
 relabel = [l-1 for l in ag_train_labels]
 Y_train = to_categorical(relabel, num_classes) # One-hot encode the labels
