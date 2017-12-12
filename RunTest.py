@@ -49,7 +49,7 @@ if __name__ == '__main__':
     ag_train_labels = ag_train_data[:,0]
     #concatenate title and description
     ag_train_text = [' '.join(s) for s in zip(ag_train_data[:,1], ag_train_data[:,2])]
-    print(np.shape(ag_train_text))
+    #print(np.shape(ag_train_text))
     ag_train_text = np.asarray(ag_train_text)
 
     print("encoding...")
