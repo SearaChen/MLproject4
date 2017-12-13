@@ -73,7 +73,11 @@ if __name__ == '__main__':
 
     ag_test_labels = ag_test_data[:,0]
     #concatenate title and description
-    ag_test_text = [' '.join(s) for s in zip(ag_test_data[:,1], ag_test_data[:,2])]
+    if arg == 'yelp_pol':
+        ag_test_text = ag_test_data[:,1]
+    else:
+        ag_test_text = [' '.join(s) for s in zip(ag_test_data[:,1], ag_test_data[:,2])]
+
     print(np.shape(ag_test_text))
     ag_test_text = np.asarray(ag_test_text)
 
