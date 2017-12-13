@@ -5,7 +5,6 @@ from keras.utils import to_categorical
 from keras.layers import Input
 from keras.layers import MaxPooling1D
 from keras.layers import Conv1D
-from keras.layers import Dropout
 from keras.layers import Flatten
 from keras.layers import Dense
 from keras.layers import Concatenate
@@ -16,8 +15,14 @@ import time
 import sys
 from keras.callbacks import ModelCheckpoint
 
-class ToDenseSeq(Sequence):
+"""
+Reads in the data set, configures the CNN, and trains it on the training data. Then evaluates on the test set.
+start with arguments, ag_news, dbpedia or yelp_pol to select the wanted data set.
+"""
 
+
+class ToDenseSeq(Sequence):
+    """used to create the batches for the CNN"""
     def __init__(self, x_set, y_set, batch_size):
         self.x, self.y = x_set, y_set
         self.batch_size = batch_size
@@ -38,8 +43,9 @@ class ToDenseSeq(Sequence):
 
 if __name__ == '__main__':
     start = time.time()
-    arg = sys.argv[1]
 
+    #evaluate command line arguments and set parameters accordingly
+    arg = sys.argv[1]
     path = arg + '_csv'
     if arg == 'ag_news':
         batches = 3750
@@ -52,27 +58,28 @@ if __name__ == '__main__':
         batches = 17500
         testbatches = 95
 
-
+    #read in train and test data
     ag_train_data = read_in(path,'train')
     ag_test_data = read_in(path,'test')
 
+    #create encoder
     encoder = my_encoding()
 
     ag_train_labels = ag_train_data[:,0]
-    #concatenate title and description
 
+    #concatenate title and description for datasets with both
     if arg == 'yelp_pol':
         ag_train_text = ag_train_data[:,1]
     else:
         ag_train_text = [' '.join(s) for s in zip(ag_train_data[:,1], ag_train_data[:,2])]
-    #print(np.shape(ag_train_text))
-    #ag_train_text = np.asarray(ag_train_text)
 
+    #fit the encoder on the train set
     print("encoding...")
     encoder.fit(ag_train_text)
 
+
     ag_test_labels = ag_test_data[:,0]
-    #concatenate title and description
+    #concatenate title and description for datasets with both (test set
     if arg == 'yelp_pol':
         ag_test_text = ag_test_data[:,1]
     else:
@@ -82,12 +89,12 @@ if __name__ == '__main__':
     ag_test_text = np.asarray(ag_test_text)
 
 
-
-
 ######CNN######
+#as specified in the original paper
 words = 128
 chars =256
 
+#set the number of classes according to the data set
 num_classes = len(set(ag_train_labels))
 
 relabel = [l-1 for l in ag_train_labels]
@@ -95,8 +102,8 @@ Y_train = to_categorical(relabel, num_classes) # One-hot encode the labels
 relabel = [l-1 for l in ag_test_labels]
 Y_test = to_categorical(relabel, num_classes) # One-hot encode the labels
 
+#network structure as provided in the paper
 input_1 = Input(shape=(words,chars))
-
 conv1d_1 = Conv1D(256,3,activation='relu')(input_1)
 conv1d_2 = Conv1D(256,3,activation='relu')(input_1)
 conv1d_3 = Conv1D(256,3,activation='relu')(input_1)
@@ -121,19 +128,22 @@ dense_2 = Dense(num_classes, activation="softmax")(dense_1)
 
 model = Model(inputs=input_1, outputs=dense_2)
 
-model.compile(loss='categorical_crossentropy', # using the cross-entropy loss function
-              optimizer='adam', # using the Adam optimiser
-              metrics=['accuracy']) # reporting the accuracy
+model.compile(loss='categorical_crossentropy',  # using the cross-entropy loss function
+              optimizer='adam',                 # using the Adam optimiser
+              metrics=['accuracy'])
 
 print(model.summary())
 
-
+#create individual batches with a Sequence
 seq = ToDenseSeq(ag_train_text,Y_train,32)
+#save the model after each epoch.
 cb = ModelCheckpoint("model.hdf5", monitor='acc', save_best_only=False, save_weights_only=False, mode='auto', period=1)
+#fit the model
 model.fit_generator(seq,steps_per_epoch=batches, epochs=5, verbose=1,callbacks=[cb])
 
-
+#after model is trained evaluate the test set
 seq = ToDenseSeq(ag_test_text,Y_test,400)
 print(model.evaluate_generator(seq,steps=testbatches))
 
+#print total running time in seconds
 print ("Time spent: {}s".format(time.time() -start))
