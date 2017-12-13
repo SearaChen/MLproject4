@@ -101,6 +101,6 @@ model = load_model("model.hdf5")
 print(model.summary())
 
 seq = ToDenseSeq(ag_test_text,Y_test,400)
-print(model.evaluate_generator(seq,steps=testbatches))
+print(model.evaluate_generator(seq,steps=testbatches,verbose=1))
 
 print ("Time spent: {}s".format(time.time() -start))
